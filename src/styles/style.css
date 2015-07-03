@@ -1,0 +1,40 @@
+.circle-plot .node {
+  font-size: 11px;
+  fill: #bbb;
+}
+
+.circle-plot .link {
+  fill: none;
+  stroke-width: 2px;
+  pointer-events: none;
+  shape-rendering: auto;
+}
+
+.circle-plot .arc--highlight,
+.circle-plot .arc--highlight--stick {
+  fill: #505050 !important;
+}
+
+.circle-plot .node--highlight,
+.circle-plot .node--highlight--stick {
+  font-weight: 600 !important;
+  fill: #505050 !important;
+}
+
+.circle-plot .link--highlight {
+  opacity: 0.8 !important;
+  stroke-width: 3px !important;
+  stroke: #323232 !important;
+}
+
+.circle-plot .link--fade--in {
+  visibility: visible;
+}
+
+.circle-plot .link--fade--out {
+  display: none;
+}
+
+.circle-plot .link--fade--stick {
+  visibility: visibile;
+}
