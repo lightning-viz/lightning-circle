@@ -7,13 +7,13 @@
     "lightning-client-utils": "^0.6.3",
     "lightning-visualization": "^0.0.4",
     "lodash": "^3.10.0",
-    "underscore.nest": "git://github.com/mathisonian/underscore.nest"
+    "underscore.nest": "git://github.com/mathisonian/underscore.nest",
+    "brfs": "^1.4.0"
   },
   "keywords": [
     "lightning-visualization"
   ],
   "devDependencies": {
-    "brfs": "^1.4.0"
   },
   "engines": {
     "node": ">=0.8.0"
