@@ -1,6 +1,6 @@
 {
   "name": "lightning-circle",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "d3": "^3.5.5",
     "d3-multiaxis-zoom": "^1.0.4",
@@ -13,8 +13,7 @@
   "keywords": [
     "lightning-visualization"
   ],
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=0.8.0"
   },
