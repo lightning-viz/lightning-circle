@@ -1,6 +1,7 @@
 .circle-plot .node {
   font-size: 11px;
   fill: #bbb;
+  cursor: pointer;
 }
 
 .circle-plot .link {

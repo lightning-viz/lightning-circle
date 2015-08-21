@@ -6,18 +6,14 @@ var _ = require('lodash');
 var nester = require('underscore.nest');
 var d3 = require('d3');
 var MultiAxisZoom = require('d3-multiaxis-zoom');
-
-
 var fs = require('fs');
-var styles = fs.readFileSync(__dirname + '/styles/style.css');
+var css = fs.readFileSync(__dirname + '/style.css');
 
 
-/*
- * Extend the base visualization object
- */
 var Visualization = LightningVisualization.extend({
 
-    styles: styles,
+    css: css,
+
     defaultColor: '#deebfa',
 
     init: function() {
@@ -31,12 +27,19 @@ var Visualization = LightningVisualization.extend({
         // get primary fields
         var nodes = data.nodes
         var level = data.level
-        var label = data.label
-        var names = data.names
-        
-        // get colors using top-level label
-        data.label = data.label[0]
-        retColor = utils.getColorFromData(data)
+        data.group = data.group ? data.group : [_.fill(Array(nodes.length), 0)]
+        var group = data.group
+        var labels = data.labels ? data.labels : []
+
+        // get colors using top-level group
+        data.group = data.group[0]
+        var retColor = utils.getColorFromData(data)
+
+        // infer level
+        var level = []
+        _.each(group, function(l, i) {
+            level[i] = _.range(_.max(l))
+        })
 
         // build array of items with their grouping attributes
         var items = []
@@ -44,9 +47,9 @@ var Visualization = LightningVisualization.extend({
             var entry = {}
             entry["i"] = i
             entry["c"] = retColor[i]
-            entry["name"] = names[i] ? names[i] : i
+            entry["l"] = labels[i] ? labels[i] : i
             _.each(level, function(l, j) {
-                entry[j] = l[label[j][i]]
+                entry[j] = l[group[j][i]]
             })
             items.push(entry)
         });
@@ -68,7 +71,7 @@ var Visualization = LightningVisualization.extend({
         var nodes = this.data.nodes
         var links = this.data.links
 
-        var diameter = width
+        var diameter = width * 0.8
         var radius = diameter / 2
         var innerRadius = radius - 120
 
@@ -115,7 +118,7 @@ var Visualization = LightningVisualization.extend({
             .attr("class", "link")
             .attr("d", line)
             .style("stroke", function(d) {return d.source.c ? d.source.c : self.defaultColor})
-            .style("opacity", 0.05)
+            .style("opacity", 0.7)
 
         node = node
             .data(tree.filter(function(n) { return !n.children; }))
@@ -124,10 +127,8 @@ var Visualization = LightningVisualization.extend({
             .attr("dy", ".31em")
             .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + maxDepth * 10 + 10) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
             .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-            .text(function(d) { return d.name; })
+            .text(function(d) { return d.l; })
             .style("fill", function(d) {return d.c ? d.c : self.defaultColor})
-            .on("mouseover", moverlink)
-            .on("mouseout", moutlink)
             .on("click", clicklink)
 
         link.classed("link--fade--out", false)
@@ -181,18 +182,6 @@ var Visualization = LightningVisualization.extend({
 
         }
 
-        function moverarc(d) {
-            if (d.depth == (maxDepth - 1)) {
-                d3.select(this).classed("arc--highlight", true)
-            }
-        }
-
-        function moutarc(d) {
-            if (d.depth == (maxDepth - 1)) {
-                d3.select(this).classed("arc--highlight", false)
-            }
-        }
-
         function clicklink(d) {
 
             link.classed("link--highlight", function(l) { 
@@ -206,17 +195,6 @@ var Visualization = LightningVisualization.extend({
             d3.select(this).classed("node--highlight--stick", !d3.select(this).classed("node--highlight--stick"))
         }
 
-        function moverlink(d) {
-
-            d3.select(this).classed("node--highlight", true)
-
-        }
-
-        function moutlink(d) {
-           
-            d3.select(this).classed("node--highlight", false)
-
-        }
 
         // get colors from groups
         var n = d3.max(tree.filter(function (d) {return d.depth == 1}), function(d) {return d.index})
@@ -264,8 +242,6 @@ var Visualization = LightningVisualization.extend({
              .attr("d", arc)
              .attr("class", "arc")
              .style("fill", function(d) {return d.c ? d.c : self.defaultColor})
-             .on("mouseover", moverarc)
-             .on("mouseout", moutarc)
              .on("click", clickarc)
 
         function findStartAngle(d) {
@@ -324,7 +300,8 @@ var Visualization = LightningVisualization.extend({
             }
         }
 
-        d3.select('body').on('keydown', update)
+        d3.select(selector).attr('tabindex', -1);
+        d3.select(selector).on('keydown', update)
 
         var tension = 0.7
         function update() {
