@@ -8,7 +8,8 @@
     "lightning-client-utils": "^0.7.0",
     "lightning-visualization": "^0.1.4",
     "lodash": "^3.10.0",
-    "underscore.nest": "git://github.com/mathisonian/underscore.nest"
+    "underscore.nest": "git://github.com/mathisonian/underscore.nest",
+    "brfs": "^1.4.0"
   },
   "keywords": [
     "lightning-visualization"
