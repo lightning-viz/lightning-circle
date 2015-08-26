@@ -21,18 +21,22 @@ var Visualization = LightningVisualization.extend({
         this.render();
     },
 
+    getDefaultOptions: function() {
+        return {
+            labels: true
+        }
+    },
 
     formatData: function(data) {
 
         // get primary fields
         var nodes = data.nodes
         var level = data.level
-        data.group = data.group ? data.group : [_.fill(Array(nodes.length), 0)]
-        var group = data.group
+        var group = data.group ? data.group : [_.fill(Array(nodes.length), 0)]
         var labels = data.labels ? data.labels : []
 
         // get colors using top-level group
-        data.group = data.group[0]
+        data.group = group[0]
         var retColor = utils.getColorFromData(data)
 
         // infer level
@@ -62,7 +66,7 @@ var Visualization = LightningVisualization.extend({
 
     render: function() {
 
-        var opts = this.opts
+        var options = this.options
         var height = this.height
         var width = this.width
         var selector = this.selector
@@ -120,16 +124,18 @@ var Visualization = LightningVisualization.extend({
             .style("stroke", function(d) {return d.source.c ? d.source.c : self.defaultColor})
             .style("opacity", 0.7)
 
-        node = node
-            .data(tree.filter(function(n) { return !n.children; }))
-        .enter().append("text")
-            .attr("class", "node")
-            .attr("dy", ".31em")
-            .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + maxDepth * 10 + 10) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
-            .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-            .text(function(d) { return d.l; })
-            .style("fill", function(d) {return d.c ? d.c : self.defaultColor})
-            .on("click", clicklink)
+        if (options.labels) {
+            node = node
+                .data(tree.filter(function(n) { return !n.children; }))
+            .enter().append("text")
+                .attr("class", "node")
+                .attr("dy", ".31em")
+                .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + maxDepth * 10 + 10) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+                .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+                .text(function(d) { return d.l; })
+                .style("fill", function(d) {return d.c ? d.c : self.defaultColor})
+                .on("click", clicklink)
+        }
 
         link.classed("link--fade--out", false)
         link.classed("link--fade--stick", false)
