@@ -21,12 +21,6 @@ var Visualization = LightningVisualization.extend({
         this.render();
     },
 
-    getDefaultOptions: function() {
-        return {
-            labels: true
-        }
-    },
-
     formatData: function(data) {
 
         // get primary fields
@@ -60,7 +54,7 @@ var Visualization = LightningVisualization.extend({
             var entry = {}
             entry["i"] = i
             entry["c"] = itemColors[i]
-            entry["l"] = labels[i] ? labels[i] : i
+            entry["l"] = labels[i]
             _.each(level, function(l, j) {
                 entry[j] = l[group[j][i]]
             })
@@ -134,7 +128,7 @@ var Visualization = LightningVisualization.extend({
             .style("stroke", function(d) {return d.source.c ? d.source.c : self.defaultColor})
             .style("opacity", 0.7)
 
-        if (options.labels) {
+        if (this.data.labels) {
             node = node
                 .data(tree.filter(function(n) { return !n.children; }))
             .enter().append("text")
