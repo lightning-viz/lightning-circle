@@ -35,9 +35,18 @@ var Visualization = LightningVisualization.extend({
         var group = data.group ? data.group : [_.fill(Array(nodes.length), 0)]
         var labels = data.labels ? data.labels : []
 
-        // get colors using top-level group
-        data.group = group[0]
-        var retColor = utils.getColorFromData(data)
+        // if no colors passed, use group to generate a color per group
+        // if colors passed, use those instead
+        var groupColors
+        if (data.color) {
+            groupColors = data.color.map(function(d) {return d3.rgb(d[0], d[1], d[2]); });
+        } else {
+            var n = _.unique(group[0]).length
+            groupColors = utils.getColors(n + 1)
+        }
+        var itemColors = group[0].map(function(i) {return groupColors[i]})
+
+        data.groupColors = groupColors
 
         // infer level
         var level = []
@@ -50,7 +59,7 @@ var Visualization = LightningVisualization.extend({
         _.each(nodes, function(n, i) {
             var entry = {}
             entry["i"] = i
-            entry["c"] = retColor[i]
+            entry["c"] = itemColors[i]
             entry["l"] = labels[i] ? labels[i] : i
             _.each(level, function(l, j) {
                 entry[j] = l[group[j][i]]
@@ -74,6 +83,7 @@ var Visualization = LightningVisualization.extend({
 
         var nodes = this.data.nodes
         var links = this.data.links
+        var groupColors = this.data.groupColors
 
         var diameter = width * 0.8
         var radius = diameter / 2
@@ -201,14 +211,9 @@ var Visualization = LightningVisualization.extend({
             d3.select(this).classed("node--highlight--stick", !d3.select(this).classed("node--highlight--stick"))
         }
 
-
-        // get colors from groups
-        var n = d3.max(tree.filter(function (d) {return d.depth == 1}), function(d) {return d.index})
-        var colors = utils.getColors(n + 1)
-        
         // color the first level
         tree.filter(function (d) {return d.depth == 1}).map(function(d) {
-            d.c = colors[d.index] 
+            d.c = groupColors[d.index] 
             return d
         })
 
