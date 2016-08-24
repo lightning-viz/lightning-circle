@@ -116,7 +116,6 @@ var circle = new Circle(el, data, options);
 - **options**
   - **width** – *Number* – the width of the visualization
   - **height** – *Number* – the height of the visualization
-  - **labels** – *Boolean* – `true` to show labels, `false to hide them` Default: `true`
 
 ## License
 [MIT](LICENSE)

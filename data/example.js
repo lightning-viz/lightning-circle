@@ -11,7 +11,6 @@ var data = {
 };
 
 var options = {
-  labels: true,
   width: 600,
   height: 400
 };
